@@ -17,12 +17,12 @@ public class MessageTests {
     }
 
     @Test
-    public void messageIdShouldBeUnique() {
-        Set<Integer> previousMessageIds = new HashSet<>();
+    public void idShouldBeUnique() {
+        Set<Short> previousIds = new HashSet<>();
         for (int i = 0; i < 4096; i++) {
-            int messageId = new Message().getId();
-            assertThat(previousMessageIds, not(hasItem(messageId)));
-            previousMessageIds.add(messageId);
+            short id = new Message().getId();
+            assertThat(previousIds, not(hasItem(id)));
+            previousIds.add(id);
         }
     }
 
@@ -33,17 +33,17 @@ public class MessageTests {
     }
 
     @Test
-    public void messageIdIsEncodedInSecondNibbleAndSecondByte() {
+    public void idIsEncodedInSecondNibbleAndSecondByte() {
         Message message = new Message();
         byte[] bytes = message.getBytes();
-        short messageId = concatenateBytes(rightNibble(bytes[0]), bytes[1]);
-        assertThat(messageId, is(equalTo(message.getId())));
+        short id = concatenateBytes(rightNibble(bytes[0]), bytes[1]);
+        assertThat(id, is(equalTo(message.getId())));
     }
 
     @Test
-    public void messageTypeIsEncodedInThirdByte() {
-        byte messageType = 3;
-        Message message = new Message(messageType);
-        assertThat(message.getBytes()[2], is(equalTo((byte) 3)));
+    public void typeIsEncodedInThirdByte() {
+        byte type = 3;
+        Message message = new Message(type);
+        assertThat(message.getBytes()[2], is(equalTo(type)));
     }
 }
