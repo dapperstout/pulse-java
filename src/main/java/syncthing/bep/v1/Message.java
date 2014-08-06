@@ -1,8 +1,6 @@
 package syncthing.bep.v1;
 
-import static syncthing.bep.util.Bytes.concatenateNibbles;
-import static syncthing.bep.util.Bytes.leftByte;
-import static syncthing.bep.util.Bytes.rightByte;
+import static syncthing.bep.util.Bytes.*;
 
 public class Message {
 
@@ -11,6 +9,7 @@ public class Message {
 
     private final short id;
     private byte type;
+    private boolean isCompressed = true;
 
     static synchronized short getNextMessageId() {
         short result = nextMessageId;
@@ -35,12 +34,20 @@ public class Message {
         return id;
     }
 
+    public boolean isCompressed() {
+        return isCompressed;
+    }
+
+    public void setCompressed(boolean compressed) {
+        this.isCompressed = compressed;
+    }
+
     public byte[] getBytes() {
-        byte[] result = new byte[3];
+        byte[] result = new byte[4];
         result[0] = concatenateNibbles(version, leftByte(id));
         result[1] = rightByte(id);
         result[2] = type;
-
+        result[3] = bits(false, false, false, false, false, false, false, isCompressed);
         return result;
     }
 }

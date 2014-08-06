@@ -39,4 +39,16 @@ public class BytesTests {
         byte rightByte = (byte) 0b01010101;
         assertThat(concatenateBytes(leftByte, rightByte), is(equalTo((short) 0b1010101001010101)));
     }
+
+    @Test
+    public void testDecompositionIntoBits() {
+        boolean[] bits = bits((byte) 0b10101010);
+        assertThat(bits, is(equalTo(new boolean[]{true, false, true, false, true, false, true, false})));
+    }
+
+    @Test
+    public void testCompositionIntoByte() {
+        boolean[] bits = new boolean[]{true, false, true, false, true, false, true, false};
+        assertThat(bits(bits), is(equalTo((byte) 0b10101010)));
+    }
 }

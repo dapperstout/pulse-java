@@ -27,6 +27,11 @@ public class MessageTests {
     }
 
     @Test
+    public void compressionIsEnabledByDefault() {
+        assertThat(new Message().isCompressed(), is(true));
+    }
+
+    @Test
     public void versionIsEncodedInFirstNibble() {
         Message message = new Message();
         assertThat(leftNibble(message.getBytes()[0]), is(equalTo(message.getVersion())));
@@ -45,5 +50,23 @@ public class MessageTests {
         byte type = 3;
         Message message = new Message(type);
         assertThat(message.getBytes()[2], is(equalTo(type)));
+    }
+
+    @Test
+    public void reservedBitsAreZero() {
+        boolean[] bits = bits(new Message().getBytes()[3]);
+        for (int i = 0; i < 7; i++) {
+            assertThat(bits[i], is(false));
+        }
+    }
+
+    @Test
+    public void compressionIsIndicatedInLastBitOfFourthByte() {
+        for (boolean isCompressed : new boolean[]{true, false}) {
+            Message message = new Message();
+            message.setCompressed(isCompressed);
+            boolean[] bits = bits(message.getBytes()[3]);
+            assertThat(bits[7], is(isCompressed));
+        }
     }
 }
