@@ -5,6 +5,7 @@ import org.junit.Test;
 import java.util.HashSet;
 import java.util.Set;
 
+import static java.lang.System.arraycopy;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 import static syncthing.bep.util.Bytes.*;
@@ -13,83 +14,98 @@ public class MessageTests {
 
     @Test
     public void versionIsZero() {
-        assertThat(new Message().getVersion(), is(equalTo((byte) 0)));
+        SomeMessage message = new SomeMessage();
+        byte version = extractVersionFromMessage(message);
+        assertThat(version, is(equalTo((byte) 0)));
+    }
+
+    private byte extractVersionFromMessage(Message message) {
+        byte firstByte = message.getBytes()[0];
+        return nibbles(firstByte)[0];
     }
 
     @Test
-    public void idShouldBeUnique() {
+    public void idIsUnique() {
         Set<Short> previousIds = new HashSet<>();
         for (int i = 0; i < 4096; i++) {
-            short id = new Message().getId();
+            SomeMessage message = new SomeMessage();
+            short id = extractIdFromMessage(message);
             assertThat(previousIds, not(hasItem(id)));
             previousIds.add(id);
         }
     }
 
-    @Test
-    public void compressionIsEnabledByDefault() {
-        assertThat(new Message().isCompressed(), is(true));
-    }
-
-    @Test
-    public void versionIsEncodedInFirstNibble() {
-        Message message = new Message();
-        byte firstByte = message.getBytes()[0];
-        assertThat(nibbles(firstByte)[0], is(equalTo(message.getVersion())));
-    }
-
-    @Test
-    public void idIsEncodedInSecondNibbleAndSecondByte() {
-        Message message = new Message();
+    private short extractIdFromMessage(Message message) {
         byte[] bytes = message.getBytes();
-        short id = concatenateBytes(nibbles(bytes[0])[1], bytes[1]);
-        assertThat(id, is(equalTo(message.getId())));
+        return concatenateBytes(nibbles(bytes[0])[1], bytes[1]);
     }
 
     @Test
     public void typeIsEncodedInThirdByte() {
-        byte type = 3;
-        Message message = new Message(type);
-        assertThat(message.getBytes()[2], is(equalTo(type)));
+        Message message = new Message((byte) 3);
+        byte type = extractTypeFromMessage(message);
+        assertThat(type, is(equalTo((byte) 3)));
+    }
+
+    private byte extractTypeFromMessage(Message message) {
+        return message.getBytes()[2];
     }
 
     @Test
     public void reservedBitsAreZero() {
-        boolean[] bits = bits(new Message().getBytes()[3]);
+        SomeMessage message = new SomeMessage();
+        boolean[] bits = bits(message.getBytes()[3]);
         for (int i = 0; i < 7; i++) {
             assertThat(bits[i], is(false));
         }
     }
 
     @Test
+    public void compressionIsEnabledByDefault() {
+        boolean isCompressed = extractIsCompressedFromMessage(new SomeMessage());
+        assertThat(isCompressed, is(true));
+    }
+
+    @Test
     public void compressionIsIndicatedInLastBitOfFourthByte() {
-        for (boolean isCompressed : new boolean[]{true, false}) {
-            Message message = new Message();
-            message.setCompressed(isCompressed);
-            boolean[] bits = bits(message.getBytes()[3]);
-            assertThat(bits[7], is(isCompressed));
-        }
+        Message message = new Message((byte) 0, new byte[]{}, false);
+        boolean isCompressed = extractIsCompressedFromMessage(message);
+        assertThat(isCompressed, is(false));
+    }
+
+    private boolean extractIsCompressedFromMessage(Message message) {
+        return bits(message.getBytes()[3])[7];
     }
 
     @Test
     public void uncompressedLengthIsIndicatedInBytesFiveThroughEight() {
-        byte[] contents = new byte[123456];
-        Message message = new Message();
-        message.setCompressed(false);
-        message.setContents(contents);
+        Message message = new Message((byte) 0, new byte[123456], false);
+        int length = extractContentLengthFromMessage(message);
+        assertThat(length, is(equalTo(123456)));
+    }
+
+    private int extractContentLengthFromMessage(Message message) {
         byte[] bytes = message.getBytes();
-        assertThat(concatenateBytes(bytes[4], bytes[5], bytes[6], bytes[7]), is(equalTo(123456)));
+        return concatenateBytes(bytes[4], bytes[5], bytes[6], bytes[7]);
     }
 
     @Test
     public void uncompressedContentsIsPresentInBytesNineAndForward() {
-        byte[] contents = new byte[]{12, 34, 56, 78};
-        Message message = new Message();
-        message.setCompressed(false);
-        message.setContents(contents);
+        Message message = new Message((byte) 0, new byte[]{12, 34, 56, 78}, false);
+        byte[] contents = extractContentsFromMessage(message);
+        assertThat(contents, is(equalTo(new byte[]{12, 34, 56, 78})));
+    }
+
+    private byte[] extractContentsFromMessage(Message message) {
         byte[] bytes = message.getBytes();
-        for (int i=0; i<contents.length; i++) {
-            assertThat(bytes[8 + i], is(equalTo(contents[i])));
+        byte[] contents = new byte[bytes.length - 8];
+        arraycopy(bytes, 8, contents, 0, contents.length);
+        return contents;
+    }
+
+    private class SomeMessage extends Message {
+        public SomeMessage() {
+            super((byte) 0);
         }
     }
 }
