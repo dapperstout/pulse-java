@@ -34,14 +34,15 @@ public class MessageTests {
     @Test
     public void versionIsEncodedInFirstNibble() {
         Message message = new Message();
-        assertThat(leftNibble(message.getBytes()[0]), is(equalTo(message.getVersion())));
+        byte firstByte = message.getBytes()[0];
+        assertThat(nibbles(firstByte)[0], is(equalTo(message.getVersion())));
     }
 
     @Test
     public void idIsEncodedInSecondNibbleAndSecondByte() {
         Message message = new Message();
         byte[] bytes = message.getBytes();
-        short id = concatenateBytes(rightNibble(bytes[0]), bytes[1]);
+        short id = concatenateBytes(nibbles(bytes[0])[1], bytes[1]);
         assertThat(id, is(equalTo(message.getId())));
     }
 
@@ -67,6 +68,28 @@ public class MessageTests {
             message.setCompressed(isCompressed);
             boolean[] bits = bits(message.getBytes()[3]);
             assertThat(bits[7], is(isCompressed));
+        }
+    }
+
+    @Test
+    public void uncompressedLengthIsIndicatedInBytesFiveThroughEight() {
+        byte[] contents = new byte[123456];
+        Message message = new Message();
+        message.setCompressed(false);
+        message.setContents(contents);
+        byte[] bytes = message.getBytes();
+        assertThat(concatenateBytes(bytes[4], bytes[5], bytes[6], bytes[7]), is(equalTo(123456)));
+    }
+
+    @Test
+    public void uncompressedContentsIsPresentInBytesNineAndForward() {
+        byte[] contents = new byte[]{12, 34, 56, 78};
+        Message message = new Message();
+        message.setCompressed(false);
+        message.setContents(contents);
+        byte[] bytes = message.getBytes();
+        for (int i=0; i<contents.length; i++) {
+            assertThat(bytes[8 + i], is(equalTo(contents[i])));
         }
     }
 }

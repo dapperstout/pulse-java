@@ -1,5 +1,6 @@
 package syncthing.bep.v1;
 
+import static java.lang.System.arraycopy;
 import static syncthing.bep.util.Bytes.*;
 
 public class Message {
@@ -10,6 +11,7 @@ public class Message {
     private final short id;
     private byte type;
     private boolean isCompressed = true;
+    private byte[] contents = new byte[]{};
 
     static synchronized short getNextMessageId() {
         short result = nextMessageId;
@@ -43,11 +45,21 @@ public class Message {
     }
 
     public byte[] getBytes() {
-        byte[] result = new byte[4];
-        result[0] = concatenateNibbles(version, leftByte(id));
-        result[1] = rightByte(id);
+        byte[] result = new byte[8 + contents.length];
+        result[0] = concatenateNibbles(version, bytes(id)[0]);
+        result[1] = bytes(id)[1];
         result[2] = type;
-        result[3] = bits(false, false, false, false, false, false, false, isCompressed);
+        result[3] = concatenateBits(false, false, false, false, false, false, false, isCompressed);
+        byte[] lengthBytes = bytes(contents.length);
+        result[4] = lengthBytes[0];
+        result[5] = lengthBytes[1];
+        result[6] = lengthBytes[2];
+        result[7] = lengthBytes[3];
+        arraycopy(contents, 0, result, 8, contents.length);
         return result;
+    }
+
+    public void setContents(byte[] contents) {
+        this.contents = contents;
     }
 }
