@@ -2,6 +2,8 @@ package syncthing.bep.v1;
 
 import org.junit.Test;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,13 +16,13 @@ public class MessageTests {
 
     @Test
     public void versionIsZero() {
-        SomeMessage message = new SomeMessage();
+        Message message = new SomeMessage();
         byte version = extractVersionFromMessage(message);
         assertThat(version, is(equalTo((byte) 0)));
     }
 
     private byte extractVersionFromMessage(Message message) {
-        byte firstByte = message.getBytes()[0];
+        byte firstByte = serialize(message)[0];
         return nibbles(firstByte)[0];
     }
 
@@ -28,7 +30,7 @@ public class MessageTests {
     public void idIsUnique() {
         Set<Short> previousIds = new HashSet<>();
         for (int i = 0; i < 4096; i++) {
-            SomeMessage message = new SomeMessage();
+            Message message = new SomeMessage();
             short id = extractIdFromMessage(message);
             assertThat(previousIds, not(hasItem(id)));
             previousIds.add(id);
@@ -36,7 +38,7 @@ public class MessageTests {
     }
 
     private short extractIdFromMessage(Message message) {
-        byte[] bytes = message.getBytes();
+        byte[] bytes = serialize(message);
         return concatenateBytes(nibbles(bytes[0])[1], bytes[1]);
     }
 
@@ -48,13 +50,13 @@ public class MessageTests {
     }
 
     private byte extractTypeFromMessage(Message message) {
-        return message.getBytes()[2];
+        return serialize(message)[2];
     }
 
     @Test
     public void reservedBitsAreZero() {
-        SomeMessage message = new SomeMessage();
-        boolean[] bits = bits(message.getBytes()[3]);
+        Message message = new SomeMessage();
+        boolean[] bits = bits(serialize(message)[3]);
         for (int i = 0; i < 7; i++) {
             assertThat(bits[i], is(false));
         }
@@ -74,7 +76,7 @@ public class MessageTests {
     }
 
     private boolean extractIsCompressedFromMessage(Message message) {
-        return bits(message.getBytes()[3])[7];
+        return bits(serialize(message)[3])[7];
     }
 
     @Test
@@ -85,7 +87,7 @@ public class MessageTests {
     }
 
     private int extractContentLengthFromMessage(Message message) {
-        byte[] bytes = message.getBytes();
+        byte[] bytes = serialize(message);
         return concatenateBytes(bytes[4], bytes[5], bytes[6], bytes[7]);
     }
 
@@ -97,10 +99,20 @@ public class MessageTests {
     }
 
     private byte[] extractContentsFromMessage(Message message) {
-        byte[] bytes = message.getBytes();
+        byte[] bytes = serialize(message);
         byte[] contents = new byte[bytes.length - 8];
         arraycopy(bytes, 8, contents, 0, contents.length);
         return contents;
+    }
+
+    private byte[] serialize(Message message) {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        try {
+            message.writeTo(out);
+        } catch (IOException shouldNeverHappen) {
+            throw new Error(shouldNeverHappen);
+        }
+        return out.toByteArray();
     }
 
     private class SomeMessage extends Message {

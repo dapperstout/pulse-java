@@ -1,6 +1,8 @@
 package syncthing.bep.v1;
 
-import static java.lang.System.arraycopy;
+import java.io.IOException;
+import java.io.OutputStream;
+
 import static syncthing.bep.util.Bytes.*;
 
 public class Message {
@@ -25,20 +27,14 @@ public class Message {
         this.isCompressed = isCompressed;
     }
 
-    public byte[] getBytes() {
-        byte[] result = new byte[8 + contents.length];
+    public void writeTo(OutputStream out) throws IOException {
         byte[] idBytes = bytes(id);
-        byte[] lengthBytes = bytes(contents.length);
-        result[0] = concatenateNibbles(VERSION, idBytes[0]);
-        result[1] = idBytes[1];
-        result[2] = type;
-        result[3] = concatenateBits(false, false, false, false, false, false, false, isCompressed);
-        result[4] = lengthBytes[0];
-        result[5] = lengthBytes[1];
-        result[6] = lengthBytes[2];
-        result[7] = lengthBytes[3];
-        arraycopy(contents, 0, result, 8, contents.length);
-        return result;
+        out.write(concatenateNibbles(VERSION, idBytes[0]));
+        out.write(idBytes[1]);
+        out.write(type);
+        out.write(concatenateBits(false, false, false, false, false, false, false, isCompressed));
+        out.write(bytes(contents.length));
+        out.write(contents);
     }
 
     private static class MessageId {
