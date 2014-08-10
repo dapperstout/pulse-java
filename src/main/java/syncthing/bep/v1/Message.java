@@ -11,8 +11,8 @@ public class Message {
     private static final byte VERSION = 0;
     private short id = MessageId.getNextId();
     private byte type;
-    private boolean isCompressed = true;
-    private byte[] contents = new byte[]{};
+    private byte[] contents;
+    private boolean isCompressed;
 
     public Message(byte type) {
         this(type, new byte[]{});
