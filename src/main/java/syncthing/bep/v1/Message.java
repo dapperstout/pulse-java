@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import static syncthing.bep.util.Bytes.*;
+import static syncthing.bep.util.LZ4Compression.compress;
 
 public class Message {
 
@@ -21,10 +22,10 @@ public class Message {
         this(type, contents, true);
     }
 
-    public Message(byte type, byte[] contents, boolean isCompressed) {
+    public Message(byte type, byte[] contents, boolean compress) {
         this.type = type;
-        this.contents = contents;
-        this.isCompressed = isCompressed;
+        this.contents = compress ? compress(contents) : contents;
+        this.isCompressed = compress;
     }
 
     public void writeTo(OutputStream out) throws IOException {
@@ -39,6 +40,7 @@ public class Message {
 
     private static class MessageId {
         private static short nextId = 0;
+
         public static synchronized short getNextId() {
             short result = nextId;
             nextId = (short) ((nextId + 1) % 4096);

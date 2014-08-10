@@ -11,8 +11,11 @@ import static java.lang.System.arraycopy;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 import static syncthing.bep.util.Bytes.*;
+import static syncthing.bep.util.LZ4Compression.compress;
 
 public class MessageTests {
+
+    public static final byte[] SOME_CONTENTS = new byte[]{12, 34, 56, 78};
 
     @Test
     public void versionIsZero() {
@@ -81,9 +84,16 @@ public class MessageTests {
 
     @Test
     public void uncompressedLengthIsIndicatedInBytesFiveThroughEight() {
-        Message message = new Message((byte) 0, new byte[123456], false);
+        Message message = new Message((byte) 0, SOME_CONTENTS, false);
         int length = extractContentLengthFromMessage(message);
-        assertThat(length, is(equalTo(123456)));
+        assertThat(length, is(equalTo(SOME_CONTENTS.length)));
+    }
+
+    @Test
+    public void compressedLengthIsIndicatedInBytesFiveThroughEight() {
+        Message message = new Message((byte) 0, SOME_CONTENTS, true);
+        int length = extractContentLengthFromMessage(message);
+        assertThat(length, is(equalTo(compress(SOME_CONTENTS).length)));
     }
 
     private int extractContentLengthFromMessage(Message message) {
@@ -93,9 +103,16 @@ public class MessageTests {
 
     @Test
     public void uncompressedContentsIsPresentInBytesNineAndForward() {
-        Message message = new Message((byte) 0, new byte[]{12, 34, 56, 78}, false);
+        Message message = new Message((byte) 0, SOME_CONTENTS, false);
         byte[] contents = extractContentsFromMessage(message);
-        assertThat(contents, is(equalTo(new byte[]{12, 34, 56, 78})));
+        assertThat(contents, is(equalTo(SOME_CONTENTS)));
+    }
+
+    @Test
+    public void compressedContentsIsPresentInBytesNineAndForward() {
+        Message message = new Message((byte) 0, SOME_CONTENTS, true);
+        byte[] contents = extractContentsFromMessage(message);
+        assertThat(contents, is(equalTo(compress(SOME_CONTENTS))));
     }
 
     private byte[] extractContentsFromMessage(Message message) {
@@ -103,6 +120,12 @@ public class MessageTests {
         byte[] contents = new byte[bytes.length - 8];
         arraycopy(bytes, 8, contents, 0, contents.length);
         return contents;
+    }
+
+    private class SomeMessage extends Message {
+        public SomeMessage() {
+            super((byte) 0);
+        }
     }
 
     private byte[] serialize(Message message) {
@@ -113,11 +136,5 @@ public class MessageTests {
             throw new Error(shouldNeverHappen);
         }
         return out.toByteArray();
-    }
-
-    private class SomeMessage extends Message {
-        public SomeMessage() {
-            super((byte) 0);
-        }
     }
 }
