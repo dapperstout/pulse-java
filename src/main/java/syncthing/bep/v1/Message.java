@@ -9,7 +9,7 @@ import static syncthing.bep.util.LZ4Compression.compress;
 public class Message {
 
     private static final byte VERSION = 0;
-    private short id = MessageId.getNextId();
+    private short id;
     private byte type;
     private byte[] contents;
     private boolean isCompressed;
@@ -23,9 +23,26 @@ public class Message {
     }
 
     public Message(byte type, byte[] contents, boolean compress) {
+        this(MessageId.getNextId(), type, contents, compress);
+    }
+
+    public Message(short id, byte type, byte[] contents, boolean compress) {
+        this.id = id;
         this.type = type;
         this.contents = compress ? compress(contents) : contents;
         this.isCompressed = compress;
+    }
+
+    public short getId() {
+        return id;
+    }
+
+    public byte getType() {
+        return type;
+    }
+
+    public boolean isCompressed() {
+        return isCompressed;
     }
 
     public void writeTo(OutputStream out) throws IOException {
