@@ -5,6 +5,7 @@ import java.io.OutputStream;
 
 import static syncthing.bep.util.Bytes.*;
 import static syncthing.bep.util.LZ4Compression.compress;
+import static syncthing.bep.util.LZ4Compression.decompress;
 
 public class Message {
 
@@ -39,6 +40,10 @@ public class Message {
 
     public byte getType() {
         return type;
+    }
+
+    public byte[] getContents() {
+        return isCompressed ? decompress(contents) : contents;
     }
 
     public boolean isCompressed() {

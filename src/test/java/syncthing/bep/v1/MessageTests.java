@@ -122,6 +122,12 @@ public class MessageTests {
         return contents;
     }
 
+    @Test
+    public void getContentReturnsUncompressedContents() {
+        Message message = new Message((byte)0, SOME_CONTENTS, true);
+        assertThat(message.getContents(), is(equalTo(SOME_CONTENTS)));
+    }
+
     private class SomeMessage extends Message {
         public SomeMessage() {
             super((byte) 0);
