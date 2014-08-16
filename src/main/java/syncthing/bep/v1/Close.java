@@ -1,9 +1,9 @@
 package syncthing.bep.v1;
 
+import syncthing.bep.util.XdrOutputStream;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-
-import static syncthing.bep.util.Bytes.bytes;
 
 public class Close extends Message {
 
@@ -13,14 +13,9 @@ public class Close extends Message {
 
     private static byte[] xdr(String string) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
+        XdrOutputStream xdr = new XdrOutputStream(out);
         try {
-            byte[] stringBytes = string.getBytes("UTF-8");
-            out.write(bytes(stringBytes.length));
-            out.write(stringBytes);
-            int amountOfPadding = 4 - (stringBytes.length % 4);
-            for (int i=0; i< amountOfPadding; i++) {
-                out.write(0);
-            }
+            xdr.write(string);
         } catch (IOException shouldNeverHappen) {
             throw new Error(shouldNeverHappen);
         }
