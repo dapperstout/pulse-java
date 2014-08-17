@@ -15,7 +15,8 @@ import static syncthing.bep.util.Bytes.concatenateBytes;
 
 public class XdrOutputStreamTests {
 
-    public static final String SOME_STRING = "String with interesting unicode character \u221E";
+    private static final String SOME_STRING = "String with interesting unicode character \u221E";
+
     private XdrOutputStream out;
     private ByteArrayOutputStream wrapped;
 
