@@ -16,6 +16,10 @@ public class XdrInputStream {
         int length = in.readInt();
         byte[] utf8Bytes = new byte[length];
         in.readFully(utf8Bytes);
+        int amountOfPadding = 4 - (length % 4);
+        for (int i = 0; i < amountOfPadding; i++) {
+            in.readByte();
+        }
         return new String(utf8Bytes, "UTF-8");
     }
 }

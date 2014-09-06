@@ -9,13 +9,12 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static syncthing.bep.util.Xdr.xdr;
 
-public class XdrInputStreamTests {
+public class XdrTests {
 
     @Test
-    public void readsStrings() throws IOException {
-        byte[] xdrBytes = xdr("String One", "String Two");
-        XdrInputStream in = new XdrInputStream(xdrBytes);
-
+    public void xdrEncodesStrings() throws IOException {
+        byte[] bytes = xdr("String One", "String Two");
+        XdrInputStream in = new XdrInputStream(bytes);
         assertThat(in.readString(), is(equalTo("String One")));
         assertThat(in.readString(), is(equalTo("String Two")));
     }
