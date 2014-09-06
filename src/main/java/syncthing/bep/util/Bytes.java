@@ -38,9 +38,7 @@ public class Bytes {
     public static byte concatenateBits(boolean... bits) {
         byte result = 0;
         for (boolean bit : bits) {
-            if (result != 0) {
-                result <<= 1;
-            }
+            result <<= 1;
             if (bit) {
                 result = (byte) (result | 1);
             }
