@@ -34,7 +34,7 @@ public class MessageTests {
         for (int i = 0; i < 4096; i++) {
             Message message = new SomeMessage();
             short id = extractIdFromMessage(message);
-            assertThat(previousIds, not(hasItem(id)));
+            assertThat(previousIds.contains(id), is(false));
             previousIds.add(id);
         }
     }
