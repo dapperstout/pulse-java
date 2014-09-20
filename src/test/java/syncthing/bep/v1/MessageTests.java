@@ -3,7 +3,6 @@ package syncthing.bep.v1;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -136,11 +135,7 @@ public class MessageTests {
 
     private byte[] serialize(Message message) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        try {
-            message.writeTo(out);
-        } catch (IOException shouldNeverHappen) {
-            throw new Error(shouldNeverHappen);
-        }
+        message.writeTo(out);
         return out.toByteArray();
     }
 }

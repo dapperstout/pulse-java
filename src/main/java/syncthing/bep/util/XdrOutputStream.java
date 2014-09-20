@@ -11,15 +11,31 @@ public class XdrOutputStream {
         this.out = new DataOutputStream(out);
     }
 
-    public void flush() throws IOException {
-        out.flush();
+    public void flush() {
+        try {
+            out.flush();
+        } catch (IOException exception) {
+            throw new IOFailed(exception);
+        }
     }
 
-    public void close() throws IOException {
-        out.close();
+    public void close() {
+        try {
+            out.close();
+        } catch (IOException exception) {
+            throw new IOFailed(exception);
+        }
     }
 
-    public void write(String string) throws IOException {
+    public void write(String string) {
+        try {
+            writeThrowingIOException(string);
+        } catch(IOException exception) {
+            throw new IOFailed(exception);
+        }
+    }
+
+    private void writeThrowingIOException(String string) throws IOException {
         byte[] utf8Bytes = string.getBytes("UTF-8");
         out.writeInt(utf8Bytes.length);
         out.write(utf8Bytes);

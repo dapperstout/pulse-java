@@ -1,5 +1,7 @@
 package syncthing.bep.v1;
 
+import syncthing.bep.util.IOFailed;
+
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -50,7 +52,15 @@ public class Message {
         return isCompressed;
     }
 
-    public void writeTo(OutputStream out) throws IOException {
+    public void writeTo(OutputStream out) {
+        try {
+            writeThrowingIOException(out);
+        } catch (IOException exception) {
+            throw new IOFailed(exception);
+        }
+    }
+
+    private void writeThrowingIOException(OutputStream out) throws IOException {
         byte[] idBytes = bytes(id);
         out.write(concatenateNibbles(VERSION, idBytes[0]));
         out.write(idBytes[1]);

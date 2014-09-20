@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -21,13 +22,13 @@ public class XdrOutputStreamTests {
     private ByteArrayOutputStream wrapped;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         wrapped = spy(new ByteArrayOutputStream());
         out = new XdrOutputStream(wrapped);
     }
 
     @Test
-    public void writesStringLength() throws IOException {
+    public void writesStringLength() throws UnsupportedEncodingException {
         out.write(SOME_STRING);
 
         byte[] bytes = wrapped.toByteArray();
@@ -36,7 +37,7 @@ public class XdrOutputStreamTests {
     }
 
     @Test
-    public void writesString() throws IOException {
+    public void writesString() throws UnsupportedEncodingException {
         out.write(SOME_STRING);
 
         byte[] bytes = wrapped.toByteArray();
@@ -45,7 +46,7 @@ public class XdrOutputStreamTests {
     }
 
     @Test
-    public void padsStringToFourByteBoundary() throws IOException {
+    public void padsStringToFourByteBoundary() {
         out.write(SOME_STRING);
 
         byte[] bytes = wrapped.toByteArray();

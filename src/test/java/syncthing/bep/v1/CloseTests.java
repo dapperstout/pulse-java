@@ -4,8 +4,6 @@ import org.junit.Before;
 import org.junit.Test;
 import syncthing.bep.util.XdrInputStream;
 
-import java.io.IOException;
-
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -34,11 +32,7 @@ public class CloseTests {
 
     private String extractReasonFromClose(Close message) {
         XdrInputStream in = new XdrInputStream(message.getContents());
-        try {
-            return in.readString();
-        } catch (IOException shouldNeverHappen) {
-            throw new Error(shouldNeverHappen);
-        }
+        return in.readString();
     }
 
     @Test

@@ -12,7 +12,15 @@ public class XdrInputStream {
         in = new DataInputStream(new ByteArrayInputStream(xdrBytes));
     }
 
-    public String readString() throws IOException {
+    public String readString() {
+        try {
+            return readStringThrowingIOException();
+        } catch(IOException exception) {
+            throw new IOFailed(exception);
+        }
+    }
+
+    private String readStringThrowingIOException() throws IOException {
         int length = in.readInt();
         byte[] utf8Bytes = new byte[length];
         in.readFully(utf8Bytes);
