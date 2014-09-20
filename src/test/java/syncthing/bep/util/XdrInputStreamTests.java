@@ -11,11 +11,26 @@ public class XdrInputStreamTests {
 
     @Test
     public void readsStrings() {
-        byte[] xdrBytes = xdr("String One", "String Two");
+        byte[] xdrBytes = xdr("String");
         XdrInputStream in = new XdrInputStream(xdrBytes);
 
-        assertThat(in.readString(), is(equalTo("String One")));
-        assertThat(in.readString(), is(equalTo("String Two")));
+        assertThat(in.readString(), is(equalTo("String")));
+    }
+
+    @Test
+    public void readsIntegers() {
+        byte[] xdrBytes = xdr(0xF00FA00A);
+        XdrInputStream in = new XdrInputStream(xdrBytes);
+
+        assertThat(in.readInteger(), is(equalTo(0xF00FA00A)));
+    }
+
+    @Test
+    public void readsLongs() {
+        byte[] xdrBytes = xdr(0xF00FA00AB00BC00CL);
+        XdrInputStream in = new XdrInputStream(xdrBytes);
+
+        assertThat(in.readLong(), is(equalTo(0xF00FA00AB00BC00CL)));
     }
 
 }

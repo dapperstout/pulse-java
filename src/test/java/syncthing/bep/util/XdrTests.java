@@ -10,11 +10,12 @@ import static syncthing.bep.util.Xdr.xdr;
 public class XdrTests {
 
     @Test
-    public void xdrEncodesStrings() {
-        byte[] bytes = xdr("String One", "String Two");
+    public void xdrEncodesIntermingledTypes() {
+        byte[] bytes = xdr("String", 42L, 3);
         XdrInputStream in = new XdrInputStream(bytes);
-        assertThat(in.readString(), is(equalTo("String One")));
-        assertThat(in.readString(), is(equalTo("String Two")));
-    }
 
+        assertThat(in.readString(), is(equalTo("String")));
+        assertThat(in.readLong(), is(equalTo(42L)));
+        assertThat(in.readInteger(), is(equalTo(3)));
+    }
 }

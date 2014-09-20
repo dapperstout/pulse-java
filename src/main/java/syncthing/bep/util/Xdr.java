@@ -4,12 +4,26 @@ import java.io.ByteArrayOutputStream;
 
 public class Xdr {
 
-    public static byte[] xdr(String... strings) {
+    public static byte[] xdr(Object... objects) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         XdrOutputStream xdr = new XdrOutputStream(out);
-        for (String string : strings) {
-            xdr.write(string);
+        for (Object object : objects) {
+            if (object instanceof String) {
+                xdr.writeString((String) object);
+            } else if (object instanceof Long) {
+                xdr.writeLong((Long) object);
+            } else if (object instanceof Integer) {
+                xdr.writeInteger((Integer) object);
+            } else {
+                throw new UnexpectedObject(object);
+            }
         }
         return out.toByteArray();
+    }
+
+    public static class UnexpectedObject extends RuntimeException {
+        public UnexpectedObject(Object object) {
+            super("Unexpected object: " + object);
+        }
     }
 }

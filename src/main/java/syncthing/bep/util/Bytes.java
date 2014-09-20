@@ -1,5 +1,7 @@
 package syncthing.bep.util;
 
+import java.math.BigInteger;
+
 public class Bytes {
 
     public static boolean[] bits(byte eightBits) {
@@ -35,6 +37,19 @@ public class Bytes {
         return result;
     }
 
+    public static byte[] bytes(long eightBytes) {
+        byte[] result = new byte[8];
+        result[0] = (byte) ((eightBytes >>> 56) & 0xFF);
+        result[1] = (byte) ((eightBytes >>> 48) & 0xFF);
+        result[2] = (byte) ((eightBytes >>> 40) & 0xFF);
+        result[3] = (byte) ((eightBytes >>> 32) & 0xFF);
+        result[4] = (byte) ((eightBytes >>> 24) & 0xFF);
+        result[5] = (byte) ((eightBytes >>> 16) & 0xFF);
+        result[6] = (byte) ((eightBytes >>> 8) & 0xFF);
+        result[7] = (byte) (eightBytes & 0xFF);
+        return result;
+    }
+
     public static byte concatenateBits(boolean... bits) {
         byte result = 0;
         for (boolean bit : bits) {
@@ -58,11 +73,24 @@ public class Bytes {
         return (unsigned(b0) << 24) | (unsigned(b1) << 16) | (unsigned(b2) << 8) | unsigned(b3);
     }
 
+    public static long concatenateBytes(byte... bytes) {
+        long result = 0;
+        for (byte b : bytes) {
+            result <<= 8;
+            result = (result | unsigned(b));
+        }
+        return result;
+    }
+
     public static int unsigned(byte b) {
         return b & 0xFF;
     }
 
     public static long unsigned(int i) {
         return i & 0xFFFFFFFFL;
+    }
+
+    public static BigInteger unsigned(long l) {
+        return new BigInteger(1, bytes(l));
     }
 }
