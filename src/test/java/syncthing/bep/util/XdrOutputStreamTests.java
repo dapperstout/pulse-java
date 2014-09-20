@@ -7,6 +7,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
+import static java.util.Arrays.copyOfRange;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -18,6 +19,7 @@ import static syncthing.bep.util.Bytes.concatenateBytes;
 public class XdrOutputStreamTests {
 
     private static final String SOME_STRING = "String with interesting unicode character \u221E";
+    private static final byte[] SOME_DATA = new byte[]{12, 34};
 
     private XdrOutputStream out;
     private ByteArrayOutputStream wrapped;
@@ -33,7 +35,7 @@ public class XdrOutputStreamTests {
         out.writeString(SOME_STRING);
 
         byte[] xdrBytes = wrapped.toByteArray();
-        int xdrStringLength = extractXdrStringLength(xdrBytes);
+        int xdrStringLength = extractXdrDataLength(xdrBytes);
         assertThat(xdrStringLength, is(equalTo(SOME_STRING.getBytes("UTF-8").length)));
     }
 
@@ -42,7 +44,7 @@ public class XdrOutputStreamTests {
         out.writeString(SOME_STRING);
 
         byte[] xdrBytes = wrapped.toByteArray();
-        String xdrString = new String(xdrBytes, 4, extractXdrStringLength(xdrBytes), "UTF-8");
+        String xdrString = new String(xdrBytes, 4, extractXdrDataLength(xdrBytes), "UTF-8");
         assertThat(xdrString, is(equalTo(SOME_STRING)));
     }
 
@@ -54,7 +56,24 @@ public class XdrOutputStreamTests {
         assertThat(xdrBytes.length % 4, is(equalTo(0)));
     }
 
-    private int extractXdrStringLength(byte[] bytes) {
+    @Test
+    public void writesDataLength() {
+        out.writeData(SOME_DATA);
+
+        byte[] xdrBytes = wrapped.toByteArray();
+        int xdrDataLength = extractXdrDataLength(xdrBytes);
+        assertThat(xdrDataLength, is(equalTo(SOME_DATA.length)));
+    }
+
+    @Test
+    public void writesData() {
+        out.writeData(SOME_DATA);
+
+        byte[] xdrBytes = wrapped.toByteArray();
+        assertThat(copyOfRange(xdrBytes, 4, 4 + SOME_DATA.length), is(equalTo(SOME_DATA)));
+    }
+
+    private int extractXdrDataLength(byte[] bytes) {
         return concatenateBytes(bytes[0], bytes[1], bytes[2], bytes[3]);
     }
 

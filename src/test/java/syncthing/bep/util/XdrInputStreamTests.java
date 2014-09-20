@@ -33,4 +33,11 @@ public class XdrInputStreamTests {
         assertThat(in.readLong(), is(equalTo(0xF00FA00AB00BC00CL)));
     }
 
+    @Test
+    public void readsOpaqueData() {
+        byte[] xdrBytes = xdr(new byte[]{12, 34});
+        XdrInputStream in = new XdrInputStream(xdrBytes);
+
+        assertThat(in.readData(), is(equalTo(new byte[]{12, 34})));
+    }
 }

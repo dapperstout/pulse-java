@@ -3,6 +3,7 @@ package syncthing.bep.util;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 
 import static syncthing.bep.util.Bytes.bytes;
 
@@ -31,14 +32,21 @@ public class XdrOutputStream {
 
     public void writeString(String string) {
         try {
-            writeStringThrowingIOException(string);
+            writeData(string.getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException shouldNeverHappen) {
+            throw new Error(shouldNeverHappen);
+        }
+    }
+
+    public void writeData(byte[] data) {
+        try {
+            writeDataThrowingIOException(data);
         } catch(IOException exception) {
             throw new IOFailed(exception);
         }
     }
 
-    private void writeStringThrowingIOException(String string) throws IOException {
-        byte[] utf8Bytes = string.getBytes("UTF-8");
+    public void writeDataThrowingIOException(byte[] utf8Bytes) throws IOException {
         out.writeInt(utf8Bytes.length);
         out.write(utf8Bytes);
         int amountOfPadding = 4 - (utf8Bytes.length % 4);

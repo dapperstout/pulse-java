@@ -3,6 +3,7 @@ package syncthing.bep.util;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 import static syncthing.bep.util.Bytes.concatenateBytes;
 
@@ -16,13 +17,21 @@ public class XdrInputStream {
 
     public String readString() {
         try {
-            return readStringThrowingIOException();
+            return new String(readData(), "UTF-8");
+        } catch (UnsupportedEncodingException shouldNeverHappen) {
+            throw new Error(shouldNeverHappen);
+        }
+    }
+
+    public byte[] readData() {
+        try {
+            return readDataThrowingIOException();
         } catch(IOException exception) {
             throw new IOFailed(exception);
         }
     }
 
-    private String readStringThrowingIOException() throws IOException {
+    private byte[] readDataThrowingIOException() throws IOException {
         int length = in.readInt();
         byte[] utf8Bytes = new byte[length];
         in.readFully(utf8Bytes);
@@ -30,7 +39,7 @@ public class XdrInputStream {
         for (int i = 0; i < amountOfPadding; i++) {
             in.readByte();
         }
-        return new String(utf8Bytes, "UTF-8");
+        return utf8Bytes;
     }
 
     public int readInteger() {
