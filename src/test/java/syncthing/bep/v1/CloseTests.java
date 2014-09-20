@@ -34,10 +34,4 @@ public class CloseTests {
         XdrInputStream in = new XdrInputStream(message.getContents());
         return in.readString();
     }
-
-    @Test
-    public void xdrEncodedReasonEndsOnFourByteBoundary() {
-        int amountOfBytes = message.getContents().length;
-        assertThat(amountOfBytes % 4, is(equalTo(0)));
-    }
 }
