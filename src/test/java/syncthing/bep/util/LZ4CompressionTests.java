@@ -24,6 +24,11 @@ public class LZ4CompressionTests {
         assertThat(decompress(compress(SOME_DATA)), is(equalTo(SOME_DATA)));
     }
 
+    @Test
+    public void canDecompressCompressedEmptyData() {
+        assertThat(decompress(compress(new byte[]{})), is(equalTo(new byte[]{})));
+    }
+
     @Test(expected = InvalidLZ4Data.class)
     public void shouldNotDecompressInvalidData() {
         decompress(new byte[]{0, 0, 0, 4, 12, 23, 56, 78});
