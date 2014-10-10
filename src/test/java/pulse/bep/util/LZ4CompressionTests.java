@@ -1,14 +1,14 @@
-package syncthing.bep.util;
+package pulse.bep.util;
 
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static syncthing.bep.util.Bytes.concatenateBytes;
-import static syncthing.bep.util.LZ4Compression.*;
-import static syncthing.bep.util.LZ4Compression.compress;
-import static syncthing.bep.util.LZ4Compression.decompress;
+import static pulse.bep.util.Bytes.concatenateBytes;
+import static pulse.bep.util.LZ4Compression.*;
+import static pulse.bep.util.LZ4Compression.compress;
+import static pulse.bep.util.LZ4Compression.decompress;
 
 public class LZ4CompressionTests {
 

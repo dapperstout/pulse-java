@@ -1,4 +1,4 @@
-package syncthing.bep.v1;
+package pulse.bep.v1;
 
 public class Pong extends Message {
 

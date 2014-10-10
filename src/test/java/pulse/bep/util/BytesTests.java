@@ -1,4 +1,4 @@
-package syncthing.bep.util;
+package pulse.bep.util;
 
 import org.junit.Test;
 
@@ -7,7 +7,7 @@ import java.math.BigInteger;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static syncthing.bep.util.Bytes.*;
+import static pulse.bep.util.Bytes.*;
 
 public class BytesTests {
 

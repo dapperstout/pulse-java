@@ -1,13 +1,13 @@
-package syncthing.bep.v1;
+package pulse.bep.v1;
 
-import syncthing.bep.util.IOFailed;
+import pulse.bep.util.IOFailed;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
-import static syncthing.bep.util.Bytes.*;
-import static syncthing.bep.util.LZ4Compression.compress;
-import static syncthing.bep.util.LZ4Compression.decompress;
+import static pulse.bep.util.Bytes.*;
+import static pulse.bep.util.LZ4Compression.compress;
+import static pulse.bep.util.LZ4Compression.decompress;
 
 public class Message {
 

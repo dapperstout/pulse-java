@@ -1,4 +1,4 @@
-package syncthing.bep.v1;
+package pulse.bep.v1;
 
 import org.junit.Test;
 
@@ -9,8 +9,8 @@ import java.util.Set;
 import static java.lang.System.arraycopy;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
-import static syncthing.bep.util.Bytes.*;
-import static syncthing.bep.util.LZ4Compression.compress;
+import static pulse.bep.util.Bytes.*;
+import static pulse.bep.util.LZ4Compression.compress;
 
 public class MessageTests {
 

@@ -1,4 +1,4 @@
-package syncthing.bep.util;
+package pulse.bep.util;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -13,8 +13,8 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
-import static syncthing.bep.util.Bytes.bytes;
-import static syncthing.bep.util.Bytes.concatenateBytes;
+import static pulse.bep.util.Bytes.bytes;
+import static pulse.bep.util.Bytes.concatenateBytes;
 
 public class XdrOutputStreamTests {
 

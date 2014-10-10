@@ -1,11 +1,11 @@
-package syncthing.bep.util;
+package pulse.bep.util;
 
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static syncthing.bep.util.Xdr.xdr;
+import static pulse.bep.util.Xdr.xdr;
 
 public class XdrTests {
 

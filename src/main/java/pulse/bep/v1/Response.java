@@ -1,6 +1,6 @@
-package syncthing.bep.v1;
+package pulse.bep.v1;
 
-import static syncthing.bep.util.Xdr.xdr;
+import static pulse.bep.util.Xdr.xdr;
 
 public class Response extends Message {
     public Response(Request request, byte[] data) {

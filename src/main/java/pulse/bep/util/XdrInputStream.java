@@ -1,11 +1,11 @@
-package syncthing.bep.util;
+package pulse.bep.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
-import static syncthing.bep.util.Bytes.concatenateBytes;
+import static pulse.bep.util.Bytes.concatenateBytes;
 
 public class XdrInputStream {
 

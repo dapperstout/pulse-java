@@ -1,4 +1,4 @@
-package syncthing.bep.util;
+package pulse.bep.util;
 
 import net.jpountz.lz4.LZ4Compressor;
 import net.jpountz.lz4.LZ4Exception;
@@ -7,7 +7,7 @@ import net.jpountz.lz4.LZ4FastDecompressor;
 
 import static java.lang.System.arraycopy;
 import static java.util.Arrays.copyOf;
-import static syncthing.bep.util.Bytes.*;
+import static pulse.bep.util.Bytes.*;
 
 public class LZ4Compression {
 

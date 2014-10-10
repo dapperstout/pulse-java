@@ -1,11 +1,11 @@
-package syncthing.bep.util;
+package pulse.bep.util;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 
-import static syncthing.bep.util.Bytes.bytes;
+import static pulse.bep.util.Bytes.bytes;
 
 public class XdrOutputStream {
     private DataOutputStream out;

@@ -1,8 +1,8 @@
-package syncthing.bep.v1;
+package pulse.bep.v1;
 
 import org.junit.Before;
 import org.junit.Test;
-import syncthing.bep.util.XdrInputStream;
+import pulse.bep.util.XdrInputStream;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;

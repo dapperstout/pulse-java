@@ -1,4 +1,4 @@
-package syncthing.bep.util;
+package pulse.bep.util;
 
 import java.io.ByteArrayOutputStream;
 
